@@ -1212,8 +1212,16 @@ public class NEUOverlay extends Gui {
 							NotEnoughUpdates.INSTANCE.openGui = new GuiPriceGraph(internalname.get());
 							return true;
 						} else if (keyPressed == NotEnoughUpdates.INSTANCE.config.misc.openAHKeybind) {
-							String cleanName = Utils.cleanColour(item.get("displayname").getAsString());
-							if (NotEnoughUpdates.INSTANCE.manager.auctionManager.getBazaarInfo(internalname.get()) == null) {
+							String displayname = item.get("displayname").getAsString();
+
+							String cleanName = Utils.cleanColour(displayname).replace("[Lvl {LVL}]", "").trim();
+
+							if (displayname.equals("§fEnchanted Book")) {
+								String loreName = Utils.cleanColour(item.getAsJsonArray("lore").get(0).getAsString());
+
+								String bookName = loreName.substring(0, loreName.lastIndexOf(' '));
+								NotEnoughUpdates.INSTANCE.trySendCommand("/bz " + bookName);
+							} else if (NotEnoughUpdates.INSTANCE.manager.auctionManager.getBazaarInfo(internalname.get()) == null) {
 								NotEnoughUpdates.INSTANCE.trySendCommand("/ahs " + cleanName);
 							} else {
 								NotEnoughUpdates.INSTANCE.trySendCommand("/bz " + cleanName);
@@ -1390,7 +1398,12 @@ public class NEUOverlay extends Gui {
 				"GLOVES",
 				"CLOAK",
 				"NECKLACE",
-				"BRACELET"
+				"BRACELET",
+				"DUNGEON BELT",
+				"DUNGEON GLOVES",
+				"DUNGEON CLOAK",
+				"DUNGEON NECKLACE",
+				"DUNGEON BRACELET"
 			) >= 0;
 		} else if (getSortMode() == SORT_MODE_ACCESSORY) {
 			return checkItemType(item.get("lore").getAsJsonArray(), "ACCESSORY", "HATCCESSORY", "DUNGEON ACCESSORY") >= 0;
